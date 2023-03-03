@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 
 import com.bug.jpa.domain.User;
 
@@ -30,7 +32,7 @@ public class UserRepositoryTest {
 		User user5 = new User("kaka", "kaka@nate.com", LocalDateTime.now(), LocalDateTime.now());
 		userRepository.saveAll(Lists.newArrayList(user1, user2, user3, user4, user5)); // 여러 값 저장
 		 
-		User user6 = new User("yaya", "yaya@nate.com"); // 하나 값 저장
+		User user6 = new User("rara", "rara@another.com"); // 하나 값 저장
 		userRepository.save(user6);
 		
 	}
@@ -83,7 +85,7 @@ public class UserRepositoryTest {
 	}
 	
 	@Test
-	void paging() {
+	void page() {
 		Page<User> getUsers = userRepository.findAll(PageRequest.of(1, 3));
 		
 		System.out.println("page : " + getUsers);
@@ -95,5 +97,93 @@ public class UserRepositoryTest {
 		
 		getUsers.getContent().forEach(System.out::println);
 	}
+	
+	@Test
+	void select() {
+//		System.out.println(userRepository.findByName("rara"));
+//		
+//		System.out.println("findByEmail : " + userRepository.findByEmail("rara@nate.com"));
+//		System.out.println("getByEmail : " + userRepository.getByEmail("rara@nate.com"));
+//		System.out.println("readByEmail : " + userRepository.readByEmail("rara@nate.com"));
+//		System.out.println("queryByEmail : " + userRepository.queryByEmail("rara@nate.com"));
+//		System.out.println("searchByEmail : " + userRepository.searchByEmail("rara@nate.com"));
+//		System.out.println("streamByEmail : " + userRepository.streamByEmail("rara@nate.com"));
+//		System.out.println("findUserByEmail : " + userRepository.findUserByEmail("rara@nate.com"));
+//		
+//		System.out.println("findFirst1ByName : " + userRepository.findFirst1ByName("rara"));
+//		System.out.println("findTop1ByName : " + userRepository.findTop1ByName("rara"));
+//		System.out.println("findByEmailAndName : " + userRepository.findByEmailAndName("rara@nate.com", "rara"));
+//		System.out.println("findByEmailOrName : " + userRepository.findByEmailOrName("rara@nate.com", "nana"));
+//		
+//		System.out.println("findByCreatedAtAfter : " + userRepository.findByCreatedAtAfter(LocalDateTime.now().minusDays(1L)));
+//		System.out.println("findByCreatedAtBefore : " + userRepository.findByCreatedAtBefore(LocalDateTime.now().minusDays(1L)));
+//		
+//		System.out.println("findByIdAfter : " + userRepository.findByIdAfter(3L));
+//		System.out.println("findByIdBefore : " + userRepository.findByIdBefore(3L));
+//		
+//		System.out.println("findByIdGreaterThan : " + userRepository.findByIdGreaterThan(3L));
+//		System.out.println("findByIdGreaterThanEqual : " + userRepository.findByIdGreaterThanEqual(3L));
+//		
+//		System.out.println("findByCreatedAtBetween : " + userRepository.findByCreatedAtBetween(LocalDateTime.now().minusDays(1L), LocalDateTime.now().plusDays(1L)));
+//		System.out.println("findByIdBetween : " + userRepository.findByIdBetween(1L, 3L));
+//		System.out.println("findByIdGreaterThanEqualAndIdLessThanEqual : " + userRepository.findByIdGreaterThanEqualAndIdLessThanEqual(1L, 3L));
+		
+		System.out.println("findByIdIsNotNull : " + userRepository.findByIdIsNotNull());
+		System.out.println("findByNameIn : " + userRepository.findByNameIn(Lists.newArrayList("rara", "nana")));
+		
+		System.out.println("findByNameStartingWith : " + userRepository.findByNameStartingWith("ra"));
+		System.out.println("findByNameEndingWith : " + userRepository.findByNameEndingWith("a"));
+		System.out.println("findByNameContaining : " + userRepository.findByNameContaining("ev"));
+		
+	}
+	
+	@Test
+	void pagingAndSorting() {
+		// Sort
+		System.out.println("findByTop1ByName : " + userRepository.findTop1ByName("rara"));
+		System.out.println("findTop1ByNameOrderByIdDesc : " + userRepository.findTop1ByNameOrderByIdDesc("rara"));
+		System.out.println("findTop1ByNameOrderByIdDescEmailAsc : " + userRepository.findTop1ByNameOrderByIdDescEmailAsc("rara"));
+		System.out.println("findFirstByNameWithSortParams : " + userRepository.findFirstByName("rara", Sort.by(Order.asc("id"))));
+		System.out.println("findFirstByNameWithSortParams : " + userRepository.findFirstByName("rara", Sort.by(Order.desc("id"))));
+		System.out.println("findFirstByNameWithSortParams : " + userRepository.findFirstByName("rara", Sort.by(Order.desc("id"), Order.asc("email"))));
+		System.out.println("findFirstByNameWithSortParams : " + userRepository.findFirstByName("rara", getSort()));
+		
+		// Page
+		
+		System.out.println("findByNameWithPaging : " + userRepository.findByName("rara", PageRequest.of(0, 1, Sort.by(Order.desc("id")))).getContent());
+	}
+	
+	private static Sort getSort() {
+		return Sort.by(
+					Order.desc("id"),
+					Order.asc("email"),
+					Order.desc("createdAt"),
+					Order.asc("updatedAt")
+				);
+	}
+	
+	@Test
+	void listenerTest() {
+		User user = new User();
+		user.setName("momo");
+		user.setEmail("momo@nate.com");
+		
+		userRepository.save(user);
+		
+		User user2 = userRepository.findById(1L).orElseThrow(() -> null);
+		user2.setName("momomomomomomomo");
+		
+		userRepository.save(user2);
+		
+		userRepository.deleteById(4L);
+	}
 
 }
+
+
+
+
+
+
+
+
