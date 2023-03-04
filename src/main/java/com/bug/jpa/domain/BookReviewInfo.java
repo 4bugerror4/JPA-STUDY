@@ -4,8 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,22 +18,22 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
-//@EntityListeners(value = MyEntityListener.class)
-public class UserHistory extends BaseEntity {
+public class BookReviewInfo extends BaseEntity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	private String name;
+	// optional = null을 절대 허용하지 않겠다
+	@OneToOne(optional = false) 
+	private Book book;
 	
-	private String email;
+	// private Long bookId;				// ref(null 포함)
 	
-	@ManyToOne
-	private User user;
+	private float averageReviewScore; 	// pri(null 미포함) default 값 0
 	
-//	private LocalDateTime createdAt;
-//	private LocalDateTime updatedAt;
+	private int reviewCount;
 
 }

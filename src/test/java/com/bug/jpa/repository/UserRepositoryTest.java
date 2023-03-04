@@ -14,13 +14,18 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 
+import com.bug.jpa.domain.Gender;
 import com.bug.jpa.domain.User;
+import com.bug.jpa.domain.UserHistory;
 
 @SpringBootTest
 public class UserRepositoryTest {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private UserHistoryRepository userHistoryRepository;
 	
 	@Test
 	void create() {
@@ -176,6 +181,30 @@ public class UserRepositoryTest {
 		userRepository.save(user2);
 		
 		userRepository.deleteById(4L);
+	}
+	
+	@Test
+	void userRelationTest() {
+//		User user = new User();
+//		user.setName("david");
+//		user.setEmail("david@nate.com");
+//		user.setGender(Gender.MALE);
+//		userRepository.save(user);
+//		
+//		user.setName("daniel");
+//		userRepository.save(user);
+//		
+//		user.setEmail("daniel@nate.com");
+//		userRepository.save(user);
+		
+//		userHistoryRepository.findAll().forEach(System.out::println);
+		
+//		List<UserHistory> result = userHistoryRepository.findByUserId(userRepository.findByEmail("daniel@nate.com").getId());
+		
+		List<UserHistory> result = userRepository.findByEmail("daniel@nate.com").getUserHistorys();
+		result.forEach(System.out::println);
+		
+		System.out.println("UserHistory.getUser() : " + userHistoryRepository.findAll().get(0).getUser());
 	}
 
 }
